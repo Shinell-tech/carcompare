@@ -1,0 +1,10 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme (Material 3). -->
+    <style name="Base.Theme.Carcompare" parent="Theme.Material3.DayNight">
+        <!-- Disable the legacy action bar -->
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="Theme.Carcompare" parent="Base.Theme.Carcompare" />
+</resources>

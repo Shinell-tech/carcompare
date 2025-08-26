@@ -1,0 +1,5 @@
+[
+  { "name": "Model S", "brand": "Tesla", "horsepower": 670, "torque": 1000, "weight": 2100 },
+  { "name": "Mustang", "brand": "Ford", "horsepower": 450, "torque": 530, "weight": 1700 },
+  { "name": "Civic", "brand": "Honda", "horsepower": 158, "torque": 187, "weight": 1250 }
+]

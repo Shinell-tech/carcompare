@@ -1,0 +1,44 @@
+{
+  "version": 1,
+  "sections": [
+    {
+      "title": "파워트레인",
+      "rows": [
+        {"label": "타입",        "path": "powertrain.type",                  "format": "text"},
+        {"label": "구동",        "path": "powertrain.drivetrain",            "format": "text"},
+        {"label": "출력(kW)",    "path": "powertrain.powerKw",               "format": "number", "decimals": 0, "higherIsBetter": true},
+        {"label": "토크(N·m)",   "path": "powertrain.torqueNm",              "format": "number", "decimals": 0, "higherIsBetter": true},
+        {"label": "배터리(kWh)", "path": "powertrain.batteryCapacityKwh",    "format": "number", "decimals": 1, "higherIsBetter": true},
+        {"label": "추정 주행(km)","path":"powertrain.estRangeKm",            "format": "number", "decimals": 0, "higherIsBetter": true},
+        {"label": "DC 피크(kW)", "path": "powertrain.chargingDcKwPeak",      "format": "number", "decimals": 0, "higherIsBetter": true}
+      ]
+    },
+    {
+      "title": "성능",
+      "rows": [
+        {"label": "0→100(s)",   "path": "performance.accel0To100S",         "format": "number", "decimals": 1, "higherIsBetter": false},
+        {"label": "최고속(km/h)","path": "performance.topSpeedKph",          "format": "number", "decimals": 0, "higherIsBetter": true},
+        {"label": "중량(kg)",    "path": "performance.curbWeightKg",         "format": "number", "decimals": 0, "higherIsBetter": false}
+      ]
+    },
+    {
+      "title": "치수",
+      "rows": [
+        {"label": "전장(mm)",    "path": "dimensions.lengthMm",              "format": "number", "decimals": 0, "higherIsBetter": false},
+        {"label": "전폭(mm)",    "path": "dimensions.widthMm",               "format": "number", "decimals": 0, "higherIsBetter": false},
+        {"label": "전고(mm)",    "path": "dimensions.heightMm",              "format": "number", "decimals": 0, "higherIsBetter": false},
+        {"label": "휠베이스(mm)","path": "dimensions.wheelbaseMm",           "format": "number", "decimals": 0, "higherIsBetter": true},
+        {"label": "적재(L)",     "path": "dimensions.cargoLiters",           "format": "number", "decimals": 0, "higherIsBetter": true}
+      ]
+    },
+    {
+      "title": "가격/안전",
+      "rows": [
+        {"label": "MSRP",        "path": "price.msrpLocal",                  "format": "currency", "currencyPath": "price.currency"},
+        {"label": "NHTSA(★)",   "path": "safety.nhtsaOverall",              "format": "number", "decimals": 1, "higherIsBetter": true},
+        {"label": "IIHS",        "path": "safety.iihsOverall",               "format": "text"},
+        {"label": "EuroNCAP(★)","path": "safety.euroncapOverall",           "format": "number", "decimals": 1, "higherIsBetter": true}
+      ]
+    }
+  ]
+}
