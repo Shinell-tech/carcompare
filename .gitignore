@@ -1,0 +1,68 @@
+# -----------------------------
+# Gradle
+# -----------------------------
+.gradle
+.gradle/
+build/
+**/build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# -----------------------------
+# Android Studio / IntelliJ
+# -----------------------------
+.idea/
+*.iml
+*.iws
+*.ipr
+/.idea/caches
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+
+# -----------------------------
+# Android
+# -----------------------------
+captures/
+outputs/
+.externalNativeBuild
+.cxx
+
+# 로컬 환경설정(서명 키 경로 등)
+local.properties
+'@ | Set-Content -Path .gitignore -Encoding UTF8
+
+# -----------------------------
+# Logs / Cache
+# -----------------------------
+*.log
+
+# -----------------------------
+# Keystore / Secret
+# -----------------------------
+*.jks
+*.keystore
+*.keystore.properties
+keystore.properties
+signing.properties
+*.pem
+*.p12
+*.key
+*.der
+
+# -----------------------------
+# Misc
+# -----------------------------
+# macOS
+.DS_Store
+# Windows
+Thumbs.db
+desktop.ini
+
+# -----------------------------
+# Optional (상황별 선택)
+# -----------------------------
+# Firebase 서비스 계정 키 (팀 정책 따라 다름)
+serviceAccountKey.json
+# google-services.json   # ← 필요하다면 주석 해제
