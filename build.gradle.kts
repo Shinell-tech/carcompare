@@ -1,6 +1,21 @@
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
+// <project-root>/build.gradle.kts
+
+// Hilt 플러그인 태스크가 사용하는 클래스패스에 최신 javapoet을 주입
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath("com.squareup:javapoet:1.13.0")
+    }
+}
+
+// 플러그인은 여기서는 "적용만 비활성(apply false)" 하고
+// 버전은 settings.gradle.kts의 pluginManagement에서만 관리합니다.
 plugins {
-    id("com.android.application") version "8.12.1" apply false   // ← AGP는 존재하는 최신계열 사용 권장
-    id("org.jetbrains.kotlin.android") version "2.2.10" apply false
-    id("com.google.devtools.ksp") version "2.2.10-2.0.2" apply false
+    id("com.android.application") apply false
+    id("org.jetbrains.kotlin.android") apply false
+    id("com.google.devtools.ksp") apply false
+    id("com.google.dagger.hilt.android") apply false
 }

@@ -2,15 +2,21 @@ package com.shinhyeong.carcompare
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.shinhyeong.carcompare.databinding.ActivityMainBinding
+import com.shinhyeong.carcompare.feature.compare.CompareFragment
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main) // FrameLayout(fragment_container)만 있는 레이아웃
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, CarListFragment())
+                .replace(binding.container.id, CompareFragment())
                 .commit()
         }
     }
