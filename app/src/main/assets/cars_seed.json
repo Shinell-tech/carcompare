@@ -1,0 +1,48 @@
+{
+  "fields": [
+    {"key":"power_hp","title":"최고출력","group":"POWERTRAIN","type":"NUMBER","unit":"hp"},
+    {"key":"torque_nm","title":"최대토크","group":"POWERTRAIN","type":"NUMBER","unit":"Nm"},
+    {"key":"drive_type","title":"구동방식","group":"POWERTRAIN","type":"ENUM"},
+    {"key":"transmission","title":"변속기","group":"POWERTRAIN","type":"ENUM"},
+    {"key":"battery_kwh","title":"배터리용량","group":"EV","type":"NUMBER","unit":"kWh"},
+    {"key":"range_wltp_km","title":"WLTP 주행거리","group":"EV","type":"INTEGER","unit":"km"},
+    {"key":"zero2hundred_s","title":"0-100km/h","group":"PERF","type":"NUMBER","unit":"s"},
+    {"key":"length_mm","title":"전장","group":"DIMENSIONS","type":"INTEGER","unit":"mm"},
+    {"key":"weight_kg","title":"공차중량","group":"DIMENSIONS","type":"INTEGER","unit":"kg"}
+  ],
+  "allowedValues": {
+    "drive_type": [
+      {"key":"FWD","label":"전륜"},
+      {"key":"RWD","label":"후륜"},
+      {"key":"AWD","label":"사륜"}
+    ],
+    "transmission": [
+      {"key":"MT","label":"수동"},
+      {"key":"AT","label":"자동"},
+      {"key":"DCT","label":"DCT"},
+      {"key":"CVT","label":"CVT"}
+    ]
+  },
+  "makes": [
+    {"name":"Hyundai","country":"KR"},
+    {"name":"Tesla","country":"US"}
+  ],
+  "models": [
+    {"make":"Hyundai","name":"Avante","bodyStyle":"sedan"},
+    {"make":"Tesla","name":"Model 3","bodyStyle":"sedan"}
+  ],
+  "trims": [
+    {"model":"Hyundai:Avante","trimName":"1.6 가솔린","yearStart":2024,"priceMsrp":21900000},
+    {"model":"Tesla:Model 3","trimName":"RWD","yearStart":2024,"priceMsrp":51490000}
+  ],
+  "values": [
+    {"trim":"Hyundai:Avante:1.6 가솔린","field":"power_hp","number":123},
+    {"trim":"Hyundai:Avante:1.6 가솔린","field":"torque_nm","number":154},
+    {"trim":"Hyundai:Avante:1.6 가솔린","field":"drive_type","enum":"FWD"},
+    {"trim":"Hyundai:Avante:1.6 가솔린","field":"transmission","enum":"AT"},
+    {"trim":"Tesla:Model 3:RWD","field":"battery_kwh","number":57.5},
+    {"trim":"Tesla:Model 3:RWD","field":"range_wltp_km","int":513},
+    {"trim":"Tesla:Model 3:RWD","field":"drive_type","enum":"RWD"},
+    {"trim":"Tesla:Model 3:RWD","field":"zero2hundred_s","number":6.1}
+  ]
+}

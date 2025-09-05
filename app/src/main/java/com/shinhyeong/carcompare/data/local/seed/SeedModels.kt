@@ -1,17 +1,6 @@
-// app/src/main/java/com/shinhyeong/carcompare/data/local/seed/SeedModels.kt
 package com.shinhyeong.carcompare.data.local.seed
 
 import kotlinx.serialization.Serializable
-
-@Serializable
-data class Seed(
-    val fields: List<SeedField>,
-    val allowedValues: Map<String, List<SeedAllowedValue>> = emptyMap(),
-    val makes: List<SeedMake> = emptyList(),
-    val models: List<SeedModel> = emptyList(),
-    val trims: List<SeedTrim> = emptyList(),
-    val values: List<SeedValue> = emptyList()
-)
 
 @Serializable
 data class SeedField(
@@ -37,14 +26,14 @@ data class SeedMake(
 
 @Serializable
 data class SeedModel(
-    val make: String,   // make name
+    val make: String,
     val name: String,
     val bodyStyle: String? = null
 )
 
 @Serializable
 data class SeedTrim(
-    val model: String,  // "Make:Model"
+    val model: String,          // "Make:Model"
     val trimName: String,
     val yearStart: Int,
     val yearEnd: Int? = null,
@@ -54,11 +43,21 @@ data class SeedTrim(
 
 @Serializable
 data class SeedValue(
-    val trim: String,   // "Make:Model:Trim"
-    val field: String,  // field key
+    val trim: String,           // "Make:Model:Trim"
+    val field: String,
     val number: Double? = null,
     val int: Long? = null,
     val text: String? = null,
     val bool: Boolean? = null,
     val enum: String? = null
+)
+
+@Serializable
+data class Seed(
+    val fields: List<SeedField>,
+    val allowedValues: Map<String, List<SeedAllowedValue>> = emptyMap(),
+    val makes: List<SeedMake> = emptyList(),
+    val models: List<SeedModel> = emptyList(),
+    val trims: List<SeedTrim> = emptyList(),
+    val values: List<SeedValue> = emptyList()
 )

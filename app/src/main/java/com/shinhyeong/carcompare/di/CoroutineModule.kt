@@ -15,10 +15,8 @@ annotation class IODispatcher
 
 @Module
 @InstallIn(SingletonComponent::class)
-object CoroutineModule {
+object CoroutinesModule {
 
-    @Provides
-    @Singleton
-    @IODispatcher
-    fun provideIoDispatcher(): CoroutineDispatcher = Dispatchers.IO
+    @Provides @Singleton @IODispatcher
+    fun provideIODispatcher(): CoroutineDispatcher = Dispatchers.IO
 }

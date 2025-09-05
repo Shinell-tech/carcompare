@@ -4,12 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.LinearLayoutManager
+import com.shinhyeong.carcompare.R
 import com.shinhyeong.carcompare.databinding.FragmentCompareBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -20,9 +20,7 @@ class CompareFragment : Fragment() {
 
     private var _binding: FragmentCompareBinding? = null
     private val binding get() = _binding!!
-
     private val vm: CompareViewModel by viewModels()
-    private lateinit var adapter: CompareAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -31,43 +29,56 @@ class CompareFragment : Fragment() {
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        adapter = CompareAdapter()
-        binding.recycler.apply {
-            layoutManager = LinearLayoutManager(requireContext())
-            adapter = this@CompareFragment.adapter
-            addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
-        }
+    override fun onViewCreated(v: View, s: Bundle?) {
+        super.onViewCreated(v, s)
 
-        // 로딩 시작
-        vm.loadDefault()
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            vm.state.collectLatest { st ->
-                binding.progress.isVisible = st.isLoading
-                binding.errorGroup.isVisible = st.error != null
-                binding.errorText.text = st.error ?: ""
-
-                // 상단 트림 타이틀 바인딩
-                binding.trimTitleContainer.removeAllViews()
-                st.titleTrims.forEachIndexed { index, (_, name) ->
-                    val tv = layoutInflater.inflate(
-                        com.shinhyeong.carcompare.R.layout.item_trim_title, binding.trimTitleContainer, false
-                    ) as android.widget.TextView
-                    tv.text = "${index + 1}. $name"
-                    binding.trimTitleContainer.addView(tv)
-                }
-
-                // 리스트
-                adapter.submitList(st.rows)
+        binding.categoryGroup.setOnCheckedChangeListener { _, id ->
+            when (id) {
+                R.id.rbPassenger -> vm.setCategory("passenger")
+                R.id.rbCommercial -> vm.setCategory("commercial")
             }
         }
 
-        binding.btnRetry.setOnClickListener { vm.loadDefault() }
+        lifecycleScope.launch {
+            vm.vehicles.collectLatest { items ->
+                val names = items.map { it.displayName }
+                val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, names)
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                binding.spinnerA.adapter = adapter
+                binding.spinnerA.setSelection(0, false)
+                if (names.isNotEmpty()) vm.selectA(0)
+            }
+        }
+
+        binding.spinnerA.setOnItemSelectedListener { index ->
+            vm.selectA(index)
+        }
+
+        lifecycleScope.launch {
+            vm.selectedA.collectLatest { item ->
+                binding.cardA.isVisible = item != null
+                item ?: return@collectLatest
+                binding.tvTitleA.text = item.displayName
+                binding.tvBodyTypeA.text = item.bodyType ?: "-"
+                binding.tvPropulsionA.text = item.propulsion ?: "-"
+                binding.tvCategoryA.text = item.category
+            }
+        }
+    }
+
+    // small extension to avoid setting a whole listener class
+    private fun View.setOnItemSelectedListener(onSelected: (Int) -> Unit) {
+        if (this !is android.widget.Spinner) return
+        this.onItemSelectedListener = object : android.widget.AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: android.widget.AdapterView<*>, view: View?, position: Int, id: Long
+            ) { onSelected(position) }
+            override fun onNothingSelected(parent: android.widget.AdapterView<*>) {}
+        }
     }
 
     override fun onDestroyView() {
-        super.onDestroyView()
         _binding = null
+        super.onDestroyView()
     }
 }

@@ -1,13 +1,12 @@
-// app/src/main/java/com/shinhyeong/carcompare/data/local/db/entities/SpecValueEntity.kt
 package com.shinhyeong.carcompare.data.local.db.entities
 
-import androidx.room.*
-import com.shinhyeong.carcompare.data.local.db.entities.SpecFieldEntity
-import com.shinhyeong.carcompare.data.local.db.entities.TrimEntity
+import androidx.room.Entity
+import androidx.room.ForeignKey
+import androidx.room.Index
 
 @Entity(
     tableName = "spec_value",
-    primaryKeys = ["trimId","fieldId"],
+    primaryKeys = ["trimId", "fieldId"],
     foreignKeys = [
         ForeignKey(
             entity = TrimEntity::class,

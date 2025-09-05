@@ -64,4 +64,8 @@ interface CarCompareDao {
 
     @Query("SELECT * FROM trim ORDER BY id DESC LIMIT :limit")
     suspend fun getRecentTrims(limit: Int): List<TrimEntity>
+
+    @Query("SELECT id FROM trim ORDER BY id LIMIT :limit")
+    suspend fun pickTrimIds(limit: Int): List<Long>
+
 }

@@ -3,8 +3,10 @@ package com.shinhyeong.carcompare
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.shinhyeong.carcompare.databinding.ActivityMainBinding
-import com.shinhyeong.carcompare.feature.compare.CompareFragment
+import com.shinhyeong.carcompare.feature.model.ModelListFragment
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
@@ -16,8 +18,13 @@ class MainActivity : AppCompatActivity() {
 
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
-                .replace(binding.container.id, CompareFragment())
+                .replace(R.id.container, ModelListFragment.newInstance())
                 .commit()
         }
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressedDispatcher.onBackPressed()
+        return true
     }
 }

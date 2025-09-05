@@ -1,0 +1,47 @@
+[
+  {
+    "make": "Hyundai", "model": "Avante", "variant": "1.6",
+    "category": "passenger", "bodyType": "Sedan", "propulsion": "ICE",
+    "yearFrom": 2020,
+    "imageUrl": "https://picsum.photos/seed/avante/640/360",
+    "priceMinWon": 21000000, "priceMaxWon": 30000000,
+    "lengthMm": 4650, "widthMm": 1825, "heightMm": 1420, "wheelbaseMm": 2720,
+    "curbWeightKg": 1270, "powerKw": 90, "torqueNm": 154
+  },
+  {
+    "make": "Hyundai", "model": "Sonata", "variant": "2.0",
+    "category": "passenger", "bodyType": "Sedan", "propulsion": "ICE",
+    "yearFrom": 2019,
+    "imageUrl": "https://picsum.photos/seed/sonata/640/360",
+    "priceMinWon": 28000000, "priceMaxWon": 38000000,
+    "lengthMm": 4900, "widthMm": 1860, "heightMm": 1445, "wheelbaseMm": 2840,
+    "curbWeightKg": 1420, "powerKw": 118, "torqueNm": 196
+  },
+  {
+    "make": "Hyundai", "model": "Kona", "variant": "EV",
+    "category": "passenger", "bodyType": "SUV", "propulsion": "EV",
+    "yearFrom": 2021,
+    "imageUrl": "https://picsum.photos/seed/kona/640/360",
+    "priceMinWon": 32000000, "priceMaxWon": 46000000,
+    "lengthMm": 4205, "widthMm": 1800, "heightMm": 1570, "wheelbaseMm": 2600,
+    "curbWeightKg": 1650, "powerKw": 150, "torqueNm": 395
+  },
+  {
+    "make": "Hyundai", "model": "Porter II", "variant": "3.5",
+    "category": "commercial", "bodyType": "Truck", "propulsion": "ICE",
+    "yearFrom": 2015,
+    "imageUrl": "https://picsum.photos/seed/porter/640/360",
+    "priceMinWon": 19000000, "priceMaxWon": 28000000,
+    "lengthMm": 5125, "widthMm": 1740, "heightMm": 1990, "wheelbaseMm": 2810,
+    "curbWeightKg": 1670, "powerKw": 96, "torqueNm": 255
+  },
+  {
+    "make": "Hyundai", "model": "County", "variant": "Bus",
+    "category": "commercial", "bodyType": "Bus", "propulsion": "ICE",
+    "yearFrom": 2012,
+    "imageUrl": "https://picsum.photos/seed/county/640/360",
+    "priceMinWon": 82000000, "priceMaxWon": 110000000,
+    "lengthMm": 6995, "widthMm": 2060, "heightMm": 2670, "wheelbaseMm": 3860,
+    "curbWeightKg": 5120, "powerKw": 125, "torqueNm": 392
+  }
+]

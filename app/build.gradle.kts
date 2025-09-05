@@ -6,6 +6,8 @@ plugins {
     id("kotlin-parcelize")
     id("com.google.devtools.ksp")
     id("com.google.dagger.hilt.android")
+    id("dagger.hilt.android.plugin")
+
 }
 
 android {
@@ -58,6 +60,11 @@ dependencies {
 
     // Kotlinx Serialization
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serializationJson")
+
+    // ★ Fragment KTX - viewModels() 확장 제공
+    implementation("androidx.fragment:fragment-ktx:1.8.9")  // 2025-08 최신 안정판 :contentReference[oaicite:3]{index=3}
+
+    implementation("io.coil-kt:coil:2.6.0")
 }
 
 kapt {
@@ -68,6 +75,7 @@ kapt {
 ksp {
     arg("room.schemaLocation", "$projectDir/schemas")
     arg("room.generateKotlin", "true")
+    arg("room.incremental", "true")
 }
 
 // Hilt 실행 시 낮은 javapoet 끼어드는 문제 방지

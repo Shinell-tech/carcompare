@@ -1,125 +1,91 @@
 package com.shinhyeong.carcompare.data.local.seed
 
 import android.content.Context
-import androidx.room.withTransaction
+import android.util.Log
 import com.shinhyeong.carcompare.data.local.db.AppDatabase
-import com.shinhyeong.carcompare.data.local.db.FieldType
-import com.shinhyeong.carcompare.data.local.db.entities.AllowedValueEntity
-import com.shinhyeong.carcompare.data.local.db.entities.MakeEntity
-import com.shinhyeong.carcompare.data.local.db.entities.ModelEntity
-import com.shinhyeong.carcompare.data.local.db.entities.SpecFieldEntity
-import com.shinhyeong.carcompare.data.local.db.entities.SpecValueEntity
-import com.shinhyeong.carcompare.data.local.db.entities.TrimEntity
+import com.shinhyeong.carcompare.data.local.db.HyundaiVehicleEntity
+import com.shinhyeong.carcompare.di.AppJson
 import com.shinhyeong.carcompare.di.IODispatcher
 import dagger.hilt.android.qualifiers.ApplicationContext
-import javax.inject.Inject
-import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import java.io.FileNotFoundException
+import javax.inject.Inject
 
-@Singleton
 class SeedImporter @Inject constructor(
-    @ApplicationContext private val appContext: Context,
+    @ApplicationContext private val context: Context,
     private val db: AppDatabase,
-    private val json: Json,
+    @AppJson private val json: Json,
     @IODispatcher private val io: CoroutineDispatcher
 ) {
-    suspend fun importIfNeeded() = withContext(io) {
-        db.withTransaction {
-            val count = db.carCompareDao().countSpecFields()
-            if (count > 0) return@withTransaction
+    @Serializable
+    data class VehicleSeed(
+        val make: String,
+        val model: String,
+        val variant: String? = null,
+        val category: String,
+        val bodyType: String? = null,
+        val propulsion: String? = null,
+        val yearFrom: Int? = null,
+        val yearTo: Int? = null,
+        val imageUrl: String? = null,
+        val priceMinWon: Int? = null,
+        val priceMaxWon: Int? = null,
+        val lengthMm: Int? = null,
+        val widthMm: Int? = null,
+        val heightMm: Int? = null,
+        val wheelbaseMm: Int? = null,
+        val curbWeightKg: Int? = null,
+        val powerKw: Int? = null,
+        val torqueNm: Int? = null
+    )
 
-            val text = appContext.assets.open("cars_seed.json").bufferedReader().use { it.readText() }
-            val seed = json.decodeFromString(Seed.serializer(), text)
-            val dao = db.carCompareDao()
+    private val assetPath = "hyundai/hyundai_kr_2025-09-01.json"
 
-            // 1) Fields
-            val fieldEntities = seed.fields.map {
-                SpecFieldEntity(
-                    key = it.key,
-                    title = it.title,
-                    groupKey = it.group,
-                    type = FieldType.valueOf(it.type),
-                    unit = it.unit,
-                    description = it.description
-                )
+    suspend fun importIfEmpty() = withContext(io) {
+        try {
+            val count = db.hyundaiVehicleDao().count()
+            if (count > 0) {
+                Log.d("SeedImporter", "DB already seeded: $count rows")
+                return@withContext
             }
-            dao.insertSpecFields(fieldEntities)
-
-            val fieldIdByKey = seed.fields.associate { sf ->
-                val id = dao.getFieldIdByKey(sf.key)
-                    ?: error("Field not found after insert: ${sf.key}")
-                sf.key to id
-            }
-
-            // 2) Allowed values
-            val allowed = buildList {
-                seed.allowedValues.forEach { (fieldKey, list) ->
-                    val fid = fieldIdByKey[fieldKey] ?: return@forEach
-                    list.forEach { av ->
-                        add(AllowedValueEntity(fieldId = fid, key = av.key, label = av.label))
-                    }
+            val rows = try {
+                val raw = context.assets.open(assetPath).bufferedReader().use { it.readText() }
+                val seeds = json.decodeFromString<List<VehicleSeed>>(raw)
+                seeds.map { it.toEntity() }.also {
+                    Log.i("SeedImporter", "Loaded ${it.size} seeds from assets/$assetPath")
                 }
+            } catch (fnf: FileNotFoundException) {
+                Log.w("SeedImporter", "Asset not found: assets/$assetPath, using fallback seeds.")
+                fallbackSeeds()
             }
-            if (allowed.isNotEmpty()) dao.insertAllowedValues(allowed)
-
-            // 3) Makes
-            val makeEntities = seed.makes.map { MakeEntity(name = it.name, country = it.country) }
-            dao.insertMakes(makeEntities)
-            val makeIdByName = seed.makes.associate {
-                val id = dao.getMakeIdByName(it.name) ?: error("Make insert failed: ${it.name}")
-                it.name to id
-            }
-
-            // 4) Models
-            val modelEntities = seed.models.map {
-                val makeId = makeIdByName[it.make] ?: error("Make not found: ${it.make}")
-                ModelEntity(makeId = makeId, name = it.name, bodyStyle = it.bodyStyle)
-            }
-            dao.insertModels(modelEntities)
-            val modelIdByRef = seed.models.associate {
-                val makeId = makeIdByName[it.make]!!
-                val id = dao.getModelIdByMakeAndName(makeId, it.name)
-                    ?: error("Model insert failed: ${it.make}:${it.name}")
-                "${it.make}:${it.name}" to id
-            }
-
-            // 5) Trims
-            val trimEntities = seed.trims.map {
-                val modelId = modelIdByRef[it.model] ?: error("Model ref not found: ${it.model}")
-                TrimEntity(
-                    modelId = modelId,
-                    trimName = it.trimName,
-                    yearStart = it.yearStart,
-                    yearEnd = it.yearEnd,
-                    priceMsrp = it.priceMsrp,
-                    currency = it.currency
-                )
-            }
-            dao.insertTrims(trimEntities)
-            val trimIdByRef = seed.trims.associate {
-                val modelId = modelIdByRef[it.model]!!
-                val id = dao.getTrimIdByModelAndTrim(modelId, it.trimName)
-                    ?: error("Trim insert failed: ${it.model}:${it.trimName}")
-                "${it.model}:${it.trimName}" to id
-            }
-
-            // 6) Values
-            val valueEntities = seed.values.map { v ->
-                val trimId = trimIdByRef[v.trim] ?: error("Trim ref not found: ${v.trim}")
-                val fieldId = fieldIdByKey[v.field] ?: error("Field key not found: ${v.field}")
-                SpecValueEntity(
-                    trimId = trimId,
-                    fieldId = fieldId,
-                    numberValue = v.number,
-                    intValue = v.int,
-                    textValue = v.text,
-                    boolValue = v.bool,
-                    enumKey = v.enum
-                )
-            }
-            if (valueEntities.isNotEmpty()) dao.insertSpecValues(valueEntities)
+            db.hyundaiVehicleDao().insertAll(rows)
+            Log.i("SeedImporter", "Seed completed: inserted ${rows.size} rows.")
+        } catch (t: Throwable) {
+            Log.e("SeedImporter", "Seeding failed (app continues).", t)
         }
     }
+
+    private fun VehicleSeed.toEntity() = HyundaiVehicleEntity(
+        make = make, model = model, variant = variant, category = category,
+        bodyType = bodyType, propulsion = propulsion, yearFrom = yearFrom, yearTo = yearTo,
+        imageUrl = imageUrl, priceMinWon = priceMinWon, priceMaxWon = priceMaxWon,
+        lengthMm = lengthMm, widthMm = widthMm, heightMm = heightMm, wheelbaseMm = wheelbaseMm,
+        curbWeightKg = curbWeightKg, powerKw = powerKw, torqueNm = torqueNm
+    )
+
+    private fun fallbackSeeds(): List<HyundaiVehicleEntity> = listOf(
+        HyundaiVehicleEntity(make="Hyundai", model="Avante", variant="1.6", category="passenger",
+            bodyType="Sedan", propulsion="ICE", yearFrom=2020, imageUrl="https://picsum.photos/seed/avante/640/360"),
+        HyundaiVehicleEntity(make="Hyundai", model="Sonata", variant="2.0", category="passenger",
+            bodyType="Sedan", propulsion="ICE", yearFrom=2019, imageUrl="https://picsum.photos/seed/sonata/640/360"),
+        HyundaiVehicleEntity(make="Hyundai", model="Kona", variant="EV", category="passenger",
+            bodyType="SUV", propulsion="EV", yearFrom=2021, imageUrl="https://picsum.photos/seed/kona/640/360"),
+        HyundaiVehicleEntity(make="Hyundai", model="Porter II", variant="3.5", category="commercial",
+            bodyType="Truck", propulsion="ICE", yearFrom=2015, imageUrl="https://picsum.photos/seed/porter/640/360"),
+        HyundaiVehicleEntity(make="Hyundai", model="County", variant="Bus", category="commercial",
+            bodyType="Bus", propulsion="ICE", yearFrom=2012, imageUrl="https://picsum.photos/seed/county/640/360")
+    )
 }

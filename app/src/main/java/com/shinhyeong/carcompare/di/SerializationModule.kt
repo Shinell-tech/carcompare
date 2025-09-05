@@ -1,22 +1,26 @@
-// app/src/main/java/com/shinhyeong/carcompare/di/JsonModule.kt
 package com.shinhyeong.carcompare.di
 
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
 import kotlinx.serialization.json.Json
+import javax.inject.Qualifier
+import javax.inject.Singleton
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class AppJson
 
 @Module
 @InstallIn(SingletonComponent::class)
-object JsonModule {
+object SerializationModule {
 
-    @Provides
-    @Singleton
-    fun provideJson(): Json = Json {
+    @Provides @Singleton @AppJson
+    fun provideAppJson(): Json = Json {
         ignoreUnknownKeys = true
-        explicitNulls = false
         isLenient = true
+        explicitNulls = false
+        prettyPrint = false
     }
 }
